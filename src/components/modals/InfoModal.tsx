@@ -9,8 +9,12 @@ type Props = {
 export const InfoModal = ({ isOpen, handleClose }: Props) => {
   return (
     <BaseModal title="How to play" isOpen={isOpen} handleClose={handleClose}>
+      <p className="text-md text-gray-500 dark:text-gray-300 mb-6">
+        Welcome to an NFT integrated version of Wordle! The NFT functions are powered by <a href="https://www.flexonflow.com" className='text-blue-400 hover:text-blue-600'>Flex on Flow</a>.
+      </p>
+      
       <p className="text-sm text-gray-500 dark:text-gray-300">
-        Guess the word in 6 tries. After each guess, the color of the tiles will
+      Finish the puzzle and then get the chance to mint your results as an NFT. Guess the word in 6 tries. After each guess, the color of the tiles will
         change to show how close your guess was to the word.
       </p>
 
