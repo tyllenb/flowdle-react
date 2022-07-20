@@ -12,7 +12,7 @@ import {
   NEW_WORD_TEXT,
   SHARE_TEXT,
 } from '../../constants/strings'
-import { MigrationIntro } from '../stats/MigrationIntro'
+import { MintNFT } from '../stats/MintNFT'
 import { ENABLE_MIGRATE_STATS } from '../../constants/settings'
 
 type Props = {
@@ -29,6 +29,7 @@ type Props = {
   isDarkMode: boolean
   isHighContrastMode: boolean
   numberOfGuessesMade: number
+  cookies: string
 }
 
 export const StatsModal = ({
@@ -45,6 +46,7 @@ export const StatsModal = ({
   isDarkMode,
   isHighContrastMode,
   numberOfGuessesMade,
+  cookies
 }: Props) => {
   if (gameStats.totalGames <= 0) {
     return (
@@ -55,11 +57,12 @@ export const StatsModal = ({
       >
         <StatBar gameStats={gameStats} />
         {ENABLE_MIGRATE_STATS && (
-          <MigrationIntro handleMigrateStatsButton={handleMigrateStatsButton} />
+          <MintNFT handleMigrateStatsButton={handleMigrateStatsButton} />
         )}
       </BaseModal>
     )
   }
+
   return (
     <BaseModal
       title={STATISTICS_TITLE}
@@ -97,22 +100,23 @@ export const StatsModal = ({
                   isHardMode,
                   isDarkMode,
                   isHighContrastMode,
-                  handleShareToClipboard
+                  cookies,
+                  handleShareToClipboard,
                 )
               }}
             >
               <ShareIcon className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white" />
-              {SHARE_TEXT}
+              Share and Mint Result as NFT
             </button>
           </div>
         </div>
       )}
-      {ENABLE_MIGRATE_STATS && (
+      {/* {ENABLE_MIGRATE_STATS && (
         <div>
           <hr className="mt-4 -mb-4 border-gray-500" />
-          <MigrationIntro handleMigrateStatsButton={handleMigrateStatsButton} />
+          <MintNFT handleMigrateStatsButton={handleMigrateStatsButton} />
         </div>
-      )}
+      )} */}
     </BaseModal>
   )
 }

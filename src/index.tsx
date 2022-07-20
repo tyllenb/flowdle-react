@@ -4,13 +4,15 @@ import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { AlertProvider } from './context/AlertContext'
+import { CookiesProvider } from "react-cookie";
+
 
 ReactDOM.render(
-  <React.StrictMode>
     <AlertProvider>
+      <CookiesProvider>
       <App />
-    </AlertProvider>
-  </React.StrictMode>,
+      </CookiesProvider>
+    </AlertProvider>,
   document.getElementById('root')
 )
 

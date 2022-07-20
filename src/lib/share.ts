@@ -3,6 +3,8 @@ import { solutionIndex, unicodeSplit } from './words'
 import { GAME_TITLE } from '../constants/strings'
 import { MAX_CHALLENGES } from '../constants/settings'
 import { UAParser } from 'ua-parser-js'
+import { text } from 'stream/consumers'
+import axios from 'axios'
 
 const webShareApiDeviceTypes: string[] = ['mobile', 'smarttv', 'wearable']
 const parser = new UAParser()
@@ -16,6 +18,7 @@ export const shareStatus = (
   isHardMode: boolean,
   isDarkMode: boolean,
   isHighContrastMode: boolean,
+  cookies: string,
   handleShareToClipboard: () => void
 ) => {
   const textToShare =
@@ -27,6 +30,30 @@ export const shareStatus = (
       guesses,
       getEmojiTiles(isDarkMode, isHighContrastMode)
     )
+  console.log(cookies)
+
+  const headers = {
+    "Content-Type": "application/json",
+    "bx-dapp-id": "YX8XIKE4JAQ3",
+    "bx-dapp-api-key": "JQcZPprVtBq0WCIehAj1ig0wY54MZOhN"
+  }
+
+  axios.post(`https://api-wip-flex.buildx.dev/api/dapp/mint-nft?ownerId=${cookies}`,{
+      "name": "Flowdle NFT",
+      "description": "A fun spin on the game Wordle built on Flow with Flex",
+      "image": textToShare,
+      "metadata": {
+      },
+      "attributes": {
+      }
+  },
+    {
+      headers: headers
+    }).then((res) =>{
+      console.log(res)
+    }).catch((err) =>{
+      console.log(err)
+    })
 
   const shareData = { text: textToShare }
 

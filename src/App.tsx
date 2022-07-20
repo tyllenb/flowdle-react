@@ -4,6 +4,7 @@ import { Keyboard } from './components/keyboard/Keyboard'
 import { InfoModal } from './components/modals/InfoModal'
 import { StatsModal } from './components/modals/StatsModal'
 import { SettingsModal } from './components/modals/SettingsModal'
+import { NFTmodal } from './components/modals/NFTmodal'
 import {
   WIN_MESSAGES,
   GAME_COPIED_MESSAGE,
@@ -41,6 +42,9 @@ import { useAlert } from './context/AlertContext'
 import { Navbar } from './components/navbar/Navbar'
 import { isInAppBrowser } from './lib/browser'
 import { MigrateStatsModal } from './components/modals/MigrateStatsModal'
+import { useCookies } from 'react-cookie'
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios'
 
 function App() {
   const prefersDarkMode = window.matchMedia(
@@ -49,10 +53,16 @@ function App() {
 
   const { showError: showErrorAlert, showSuccess: showSuccessAlert } =
     useAlert()
+
+  const [cookies, setCookie] = useCookies(["flowdle"]);
+  const [acctCookies, setAcctCookie] = useCookies(["flowdleAcct"]);
+
+
   const [currentGuess, setCurrentGuess] = useState('')
   const [isGameWon, setIsGameWon] = useState(false)
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false)
+  const [isNFTModalOpen, setIsNFTModalOpen] = useState(false)
   const [isMigrateStatsModalOpen, setIsMigrateStatsModalOpen] = useState(false)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
   const [currentRowClass, setCurrentRowClass] = useState('')
@@ -97,12 +107,53 @@ function App() {
   useEffect(() => {
     // if no game state on load,
     // show the user the how-to info modal
+
+    if(cookies?.flowdle?.length > 0){
+      if(acctCookies?.flowdleAcct?.length > 0){
+        console.log("acct created")
+      } else{
+        console.log('create-acct')
+        creatAcctCookie()
+
+        //call api to create acct using Flex
+        const headers = {
+          "Content-Type": "application/json",
+          "bx-dapp-id": "YX8XIKE4JAQ3",
+          "bx-dapp-api-key": "JQcZPprVtBq0WCIehAj1ig0wY54MZOhN"
+        }
+        axios.post(`https://api-wip-flex.buildx.dev/api/dapp/create-account?ownerId=${cookies?.flowdle}`,{},
+        {
+          headers: headers
+        }).then((res) =>{
+          console.log()
+        }).catch((err) =>{
+          console.log(err)
+        })
+
+        //call function to create flowdleAcct createAcctCookie() 
+      }
+    } else {
+      createCookie()
+    }
+
     if (!loadGameStateFromLocalStorage()) {
       setTimeout(() => {
         setIsInfoModalOpen(true)
       }, WELCOME_INFO_MODAL_MS)
     }
-  })
+
+    function createCookie() {
+      setCookie("flowdle", uuidv4(), {
+            path: "/" });
+       }
+
+    function creatAcctCookie() {
+    setAcctCookie("flowdleAcct", uuidv4(), {
+          path: "/" });
+      }
+
+    
+  }, [])
 
   useEffect(() => {
     DISCOURAGE_INAPP_BROWSERS &&
@@ -258,6 +309,7 @@ function App() {
         setIsInfoModalOpen={setIsInfoModalOpen}
         setIsStatsModalOpen={setIsStatsModalOpen}
         setIsSettingsModalOpen={setIsSettingsModalOpen}
+        setIsNFTModalOpen={setIsNFTModalOpen}
       />
       <div className="pt-2 px-1 pb-8 md:max-w-7xl w-full mx-auto sm:px-6 lg:px-8 flex flex-col grow">
         <div className="pb-6 grow">
@@ -298,6 +350,8 @@ function App() {
           isDarkMode={isDarkMode}
           isHighContrastMode={isHighContrastMode}
           numberOfGuessesMade={guesses.length}
+          cookies={cookies?.flowdle}
+
         />
         <MigrateStatsModal
           isOpen={isMigrateStatsModalOpen}
@@ -312,6 +366,11 @@ function App() {
           handleDarkMode={handleDarkMode}
           isHighContrastMode={isHighContrastMode}
           handleHighContrastMode={handleHighContrastMode}
+        />
+        <NFTmodal
+          isOpen={isNFTModalOpen}
+          handleClose={() => setIsNFTModalOpen(false)}
+          cookies={cookies?.flowdle}
         />
         <AlertContainer />
       </div>
