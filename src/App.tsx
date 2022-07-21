@@ -128,6 +128,7 @@ function App() {
         {
           headers: headers
         }).then((res) =>{
+          console.log(res)
           if(res.data.status === "MINTED"){
             clearInterval(checkInt)
             clearInterval(myInterval)
@@ -138,7 +139,7 @@ function App() {
           }
         }
         )
-      }, 10000)
+      }, 4000)
       } else{
         //means account created and good to go
         console.log('account created') 
@@ -179,7 +180,7 @@ function App() {
         }).then((res) => {
         //get the transaction status response. 
         //If the response is minted then cancel the interval and update the acctCreated to yes in local storage
-        // console.log(res.data)
+        console.log(res.data)
         if(res.data.status === "MINTED"){
           clearInterval(refIDint)
           clearInterval(myInterval)
@@ -189,7 +190,7 @@ function App() {
           showSuccessAlert("Flow account created")
         }
         })
-        }, 10000)
+        }, 4000)
       }).catch((err) =>{
         console.log(err)
       })
