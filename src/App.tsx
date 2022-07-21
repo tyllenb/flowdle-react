@@ -109,31 +109,91 @@ function App() {
     // show the user the how-to info modal
 
     if(cookies?.flowdle?.length > 0){
-      if(acctCookies?.flowdleAcct?.length > 0){
-        console.log("acct created")
-      } else{
-        console.log('create-acct')
-        creatAcctCookie()
-
-        //call api to create acct using Flex
+      if(localStorage.getItem("acctCreated") === "no"){
+        //interval for creating account on Flow
+        var myInterval = setInterval(() =>{
+          showSuccessAlert("Creating your Flow account to store NFT's")
+        }, 3200)
+        //this means that the account has not been created yet
         const headers = {
           "Content-Type": "application/json",
           "bx-dapp-id": "YX8XIKE4JAQ3",
           "bx-dapp-api-key": "JQcZPprVtBq0WCIehAj1ig0wY54MZOhN"
         }
-        axios.post(`https://api-wip-flex.buildx.dev/api/dapp/create-account?ownerId=${cookies?.flowdle}`,{},
+
+        var refID = localStorage.getItem("acctRef")
+        //check status with ref id and then return once minted
+        var checkInt = setInterval(() =>{
+          axios.get(`https://api-wip-flex.buildx.dev/api/dapp/transaction/${refID}`,
         {
           headers: headers
         }).then((res) =>{
-          console.log()
-        }).catch((err) =>{
-          console.log(err)
-        })
-
-        //call function to create flowdleAcct createAcctCookie() 
+          if(res.data.status === "MINTED"){
+            clearInterval(checkInt)
+            clearInterval(myInterval)
+            localStorage.setItem('acctCreated', "yes" )
+            console.log('account created')
+            //set Alert that it's created
+            showSuccessAlert("Flow account created")
+          }
+        }
+        )
+      }, 10000)
+      } else{
+        //means account created and good to go
+        console.log('account created') 
       }
     } else {
-      createCookie()
+
+      //interval for creating account on Flow
+      var myInterval = setInterval(() =>{
+        showSuccessAlert("Creating your Flow account to store NFT's")
+      }, 3200)
+
+      // createCookie()
+      let id = uuidv4()
+      setCookie("flowdle", id, {
+        path: "/" });
+
+      //call api to create acct using Flex
+      const headers = {
+        "Content-Type": "application/json",
+        "bx-dapp-id": "YX8XIKE4JAQ3",
+        "bx-dapp-api-key": "JQcZPprVtBq0WCIehAj1ig0wY54MZOhN"
+      }
+      axios.post(`https://api-wip-flex.buildx.dev/api/dapp/create-account?ownerId=${id}`,{},
+      {
+        headers: headers
+      }).then((res) =>{
+        //once account created, check ref id to see if the transaction has posted to the blockchain
+        // console.log(res.data)
+        //create local storage for ref-id and if the account was created so you can check the status in case page refreshes
+        localStorage.setItem('acctRef', res?.data[Object.keys(res.data)[0]] )
+        localStorage.setItem('acctCreated', "no" )
+
+        //get the transaction status every 15 secounds
+        var refIDint = setInterval(() =>{
+          axios.get(`https://api-wip-flex.buildx.dev/api/dapp/transaction/${res.data[Object.keys(res.data)[0]]}`,
+        {
+          headers: headers
+        }).then((res) => {
+        //get the transaction status response. 
+        //If the response is minted then cancel the interval and update the acctCreated to yes in local storage
+        // console.log(res.data)
+        if(res.data.status === "MINTED"){
+          clearInterval(refIDint)
+          clearInterval(myInterval)
+          localStorage.setItem('acctCreated', "yes" )
+          console.log('account created')
+          //set Alert that it's created
+          showSuccessAlert("Flow account created")
+        }
+        })
+        }, 10000)
+      }).catch((err) =>{
+        console.log(err)
+      })
+      
     }
 
     if (!loadGameStateFromLocalStorage()) {
@@ -141,16 +201,6 @@ function App() {
         setIsInfoModalOpen(true)
       }, WELCOME_INFO_MODAL_MS)
     }
-
-    function createCookie() {
-      setCookie("flowdle", uuidv4(), {
-            path: "/" });
-       }
-
-    function creatAcctCookie() {
-    setAcctCookie("flowdleAcct", uuidv4(), {
-          path: "/" });
-      }
 
     
   }, [])
@@ -342,6 +392,7 @@ function App() {
           isGameLost={isGameLost}
           isGameWon={isGameWon}
           handleShareToClipboard={() => showSuccessAlert(GAME_COPIED_MESSAGE)}
+          handleMintNFT={() => showSuccessAlert("NFT being minted")}
           handleMigrateStatsButton={() => {
             setIsStatsModalOpen(false)
             setIsMigrateStatsModalOpen(true)

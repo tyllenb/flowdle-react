@@ -15,8 +15,16 @@ export const NFTmodal = ({  cookies, isOpen, handleClose }: Props) => {
 
   useEffect(() =>{
 
-    callit()
 
+    var metadataInt = setInterval(() =>{
+      if(localStorage.getItem("acctCreated") === "no"){
+        console.log('creating account')
+      }else{
+        // console.log('account created yo')
+        callit()
+        clearInterval(metadataInt)
+      }
+    },5000)
 
     function callit(){
 
@@ -105,7 +113,8 @@ export const NFTmodal = ({  cookies, isOpen, handleClose }: Props) => {
                   >
                     Your Wordle NFT's
                   </Dialog.Title>
-                  <div className="mt-2 mb-10">Your Account ID is: <b>{cookies}</b>. <br />  <br /> <u>If you erase your browser history you will lose your account</u> and your NFTs so please copy this number somewhere.</div>
+                  <div className="mt-2 mb-3">Your Account ID is: <b>{cookies}</b>. <br />  <br /> <u>If you erase your browser history you will lose your account</u> and your NFTs so please copy this number somewhere.</div>
+                  <div className='text-xs mb-10'>Note: If you minted an NFT but it hasn't shown up yet, don't worry. It can take up to a minute to mint on the blockchain but it will show up soon after</div>
                   <div className='mt-2 grid grid-cols-4 gap-4'>
                     {nft?.map((obj: any) =>{
                       return(

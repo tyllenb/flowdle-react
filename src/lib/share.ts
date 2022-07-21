@@ -30,7 +30,47 @@ export const shareStatus = (
       guesses,
       getEmojiTiles(isDarkMode, isHighContrastMode)
     )
-  console.log(cookies)
+  const shareData = { text: textToShare }
+
+  let shareSuccess = false
+
+  try {
+    if (attemptShare(shareData)) {
+      navigator.share(shareData)
+      shareSuccess = true
+    }
+  } catch (error) {
+    shareSuccess = false
+  }
+
+  if (!shareSuccess) {
+    navigator.clipboard.writeText(textToShare)
+    handleShareToClipboard()
+  }
+}
+
+export const mintNFT = (
+  solution: string,
+  guesses: string[],
+  lost: boolean,
+  isHardMode: boolean,
+  isDarkMode: boolean,
+  isHighContrastMode: boolean,
+  cookies: string,
+  handleShareToClipboard: () => void,
+  handleMintNFT: () => void
+
+) => {
+  const textToShare =
+    `${GAME_TITLE} ${solutionIndex} ${
+      lost ? 'X' : guesses.length
+    }/${MAX_CHALLENGES}${isHardMode ? '*' : ''}\n\n` +
+    generateEmojiGrid(
+      solution,
+      guesses,
+      getEmojiTiles(isDarkMode, isHighContrastMode)
+    )
+  // console.log(cookies)
 
   const headers = {
     "Content-Type": "application/json",
@@ -50,7 +90,7 @@ export const shareStatus = (
     {
       headers: headers
     }).then((res) =>{
-      console.log(res)
+      console.log()
     }).catch((err) =>{
       console.log(err)
     })
@@ -70,7 +110,7 @@ export const shareStatus = (
 
   if (!shareSuccess) {
     navigator.clipboard.writeText(textToShare)
-    handleShareToClipboard()
+    handleMintNFT()
   }
 }
 

@@ -1,9 +1,9 @@
 import Countdown from 'react-countdown'
-import { ShareIcon } from '@heroicons/react/outline'
+import { DocumentAddIcon, ShareIcon } from '@heroicons/react/outline'
 import { StatBar } from '../stats/StatBar'
 import { Histogram } from '../stats/Histogram'
 import { GameStats } from '../../lib/localStorage'
-import { shareStatus } from '../../lib/share'
+import { mintNFT, shareStatus } from '../../lib/share'
 import { tomorrow } from '../../lib/words'
 import { BaseModal } from './BaseModal'
 import {
@@ -24,6 +24,7 @@ type Props = {
   isGameLost: boolean
   isGameWon: boolean
   handleShareToClipboard: () => void
+  handleMintNFT: () => void
   handleMigrateStatsButton: () => void
   isHardMode: boolean
   isDarkMode: boolean
@@ -41,6 +42,7 @@ export const StatsModal = ({
   isGameLost,
   isGameWon,
   handleShareToClipboard,
+  handleMintNFT,
   handleMigrateStatsButton,
   isHardMode,
   isDarkMode,
@@ -106,17 +108,41 @@ export const StatsModal = ({
               }}
             >
               <ShareIcon className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white" />
-              Share and Mint Result as NFT
+              Share Result
             </button>
           </div>
         </div>
       )}
-      {/* {ENABLE_MIGRATE_STATS && (
+      {ENABLE_MIGRATE_STATS && (
         <div>
           <hr className="mt-4 -mb-4 border-gray-500" />
-          <MintNFT handleMigrateStatsButton={handleMigrateStatsButton} />
+          {/* <MintNFT handleMigrateStatsButton={handleMigrateStatsButton} /> */}
+          <button
+              type="button"
+              className="inline-flex disabled:bg-gray-300 justify-center items-center text-center mt-6 w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+              disabled={localStorage.getItem("acctCreated") === "no"}
+              onClick={() => {
+                mintNFT(
+                  solution,
+                  guesses,
+                  isGameLost,
+                  isHardMode,
+                  isDarkMode,
+                  isHighContrastMode,
+                  cookies,
+                  handleShareToClipboard,
+                  handleMintNFT
+                )
+              }}
+            >
+              <DocumentAddIcon className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white" />
+              Mint Result as NFT
+            </button>
+            <div className='text-xs mt-2'>
+              If the mint button is disabled it means your account is still being created. Give it a minute and refresh the page and you should be able to mint then.
+            </div>
         </div>
-      )} */}
+      )}
     </BaseModal>
   )
 }
