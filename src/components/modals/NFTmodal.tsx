@@ -30,8 +30,8 @@ export const NFTmodal = ({  cookies, isOpen, handleClose }: Props) => {
 
       const headers = {
         "Content-Type": "application/json",
-        "bx-dapp-id": "YX8XIKE4JAQ3",
-        "bx-dapp-api-key": "JQcZPprVtBq0WCIehAj1ig0wY54MZOhN"
+        "bx-dapp-id": "AXSDLH0GWAHQ",
+        "bx-dapp-api-key": "SnO1dAsdB7LdnZiHI8bpTDX74dSj2TDL"
       }
 
       axios.get(`https://api-wip-flex.buildx.dev/api/dapp/owner/${cookies}/nft`,

@@ -74,8 +74,8 @@ export const mintNFT = (
 
   const headers = {
     "Content-Type": "application/json",
-    "bx-dapp-id": "YX8XIKE4JAQ3",
-    "bx-dapp-api-key": "JQcZPprVtBq0WCIehAj1ig0wY54MZOhN"
+    "bx-dapp-id": "AXSDLH0GWAHQ",
+    "bx-dapp-api-key": "SnO1dAsdB7LdnZiHI8bpTDX74dSj2TDL"
   }
 
   axios.post(`https://api-wip-flex.buildx.dev/api/dapp/mint-nft?ownerId=${cookies}`,{
